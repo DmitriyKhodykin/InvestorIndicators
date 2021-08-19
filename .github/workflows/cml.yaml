@@ -15,3 +15,5 @@ jobs:
           # Workflow runners
           # Install requirements
           pip install -r requirements.txt
+          # Indicators
+          python src/buffett_indicator.py
