@@ -11,6 +11,7 @@ jobs:
       - name: Generate metrics report
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BEA_API_KEY: ${{ secrets.BEA_API_KEY }}
         run: |
           # Workflow runners
           # Install requirements

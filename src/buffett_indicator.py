@@ -1,7 +1,10 @@
 """
 The Buffett Indicator is the ratio of total stock market valuation to GDP.
-Stock market data from the Yahoo Finance website through `yahoo_fin`
+Stock market data from the Yahoo Finance website through `yahoo_fin`:
 http://theautomatic.net/yahoo_fin-documentation/#get_analysts_info
+
+Bureau of Economic Analysis USA:
+https://apps.bea.gov/API/docs/index.htm
 """
 import matplotlib.pyplot as plt
 import yahoo_fin.stock_info as si
