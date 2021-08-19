@@ -1,0 +1,17 @@
+name: InvestorIndicators
+on: push
+jobs:
+  run:
+    runs-on: [ubuntu-latest]
+    container: docker://dvcorg/cml:0-dvc2-base1
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Generate metrics report
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Workflow runners
+          # Install requirements
+          pip install -r requirements.txt
