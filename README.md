@@ -1,0 +1,1 @@
+# Project for calculating financial indicators for investors in stock markets
