@@ -6,7 +6,10 @@ http://theautomatic.net/yahoo_fin-documentation/#get_analysts_info
 Bureau of Economic Analysis USA:
 https://apps.bea.gov/API/docs/index.htm
 """
+import os
+
 import matplotlib.pyplot as plt
+import requests
 import yahoo_fin.stock_info as si
 
 
@@ -32,6 +35,12 @@ def get_live_price_of_shares(ticker) -> float:
 
 
 def get_gdp():
+    bea_url = 'https://apps.bea.gov/api/data/'
+    bea_api_key = os.environ['BEA_API_KEY']
+    bea_address = f'{bea_url}?&UserID={bea_api_key}&method=GETDATASETLIST&'
+    request = requests.get(bea_address)
+    response = request.text
+    print(response)
     usa_gdp = 21430.00
     return usa_gdp
 
