@@ -1,21 +1,26 @@
 """
 The Buffett Indicator is the ratio of total stock market valuation to GDP.
+
 Stock market data from the Yahoo Finance website through `yahoo_fin`:
 http://theautomatic.net/yahoo_fin-documentation/#get_analysts_info
 
 Bureau of Economic Analysis USA:
 https://apps.bea.gov/API/docs/index.htm
 """
+import json
 import os
 
 import matplotlib.pyplot as plt
+import pandas
 import requests
 import yahoo_fin.stock_info as si
 
 
 def main():
-    x = buffet_indicator_calculation()
-    print(x)
+    """
+    Main workflow.
+    """
+    make_indicator_graph()
 
 
 def get_number_of_shares(ticker) -> int:
@@ -34,14 +39,32 @@ def get_live_price_of_shares(ticker) -> float:
     return live_price
 
 
-def get_gdp():
+def get_usa_gdp() -> float:
+    """
+    Get USA GDP from BEA API.
+    """
+    usa_gdp: float = 0.0
     bea_url = 'https://apps.bea.gov/api/data/'
     bea_api_key = os.environ['BEA_API_KEY']
-    bea_address = f'{bea_url}?&UserID={bea_api_key}&method=GETDATASETLIST&'
+    bea_method = 'GetData'
+    bea_dataset = 'GDPbyIndustry'
+
+    bea_address = f'{bea_url}?&UserID={bea_api_key}&' \
+                  f'method={bea_method}&' \
+                  f'DataSetName={bea_dataset}&' \
+                  f'Year=2020&' \
+                  f'Industry=ALL&' \
+                  f'tableID=11&' \
+                  f'Frequency=A'
+
     request = requests.get(bea_address)
-    response = request.text
-    print(response)
-    usa_gdp = 21430.00
+
+    try:
+        response = json.loads(request.text)  # Text to JSON format
+        data = pandas.DataFrame(response['BEAAPI']['Results'][0]['Data'])
+        usa_gdp = data['DataValue'].astype(float).sum()
+    except (json.JSONDecodeError, KeyError) as error:
+        print(error)
     return usa_gdp
 
 
@@ -69,13 +92,20 @@ def buffet_indicator_calculation():
     """
     Calculation of the buffet indicator.
     """
-    usa_gdp = get_gdp()
+    usa_gdp = get_usa_gdp()
     buffet_indicator = round(capitalization_of_all_issuers() / usa_gdp * 100, 2)
     return buffet_indicator
 
 
 def make_indicator_graph():
-    pass
+    """
+    Make graph from buffet indicator.
+    """
+    buffet_indicator = buffet_indicator_calculation()
+    fig = plt.figure()
+    plt.bar(buffet_indicator, height=100)
+    plt.xlabel('BuffetIndicator')
+    fig.savefig('pics/buffett_indicator.png', dpi=100)
 
 
 if __name__ == '__main__':
